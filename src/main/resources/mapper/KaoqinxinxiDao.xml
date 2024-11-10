@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dao.KaoqinxinxiDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.entity.KaoqinxinxiEntity" id="kaoqinxinxiMap">
+        <result property="yonghuming" column="yonghuming"/>
+        <result property="xingming" column="xingming"/>
+        <result property="kaoqinzhuangkuang" column="kaoqinzhuangkuang"/>
+        <result property="kaoqinriqi" column="kaoqinriqi"/>
+        <result property="kaoqinshuoming" column="kaoqinshuoming"/>
+    </resultMap>
+
+	<select id="selectListVO"
+		resultType="com.entity.vo.KaoqinxinxiVO" >
+		SELECT * FROM kaoqinxinxi  kaoqinxinxi         
+        <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+	
+	<select id="selectVO"
+		resultType="com.entity.vo.KaoqinxinxiVO" >
+		SELECT  kaoqinxinxi.* FROM kaoqinxinxi  kaoqinxinxi
+ 		<where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+
+    <select id="selectListView"
+		resultType="com.entity.view.KaoqinxinxiView" >
+
+		SELECT  kaoqinxinxi.* FROM kaoqinxinxi  kaoqinxinxi 	        
+        <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+	
+	<select id="selectView"
+		resultType="com.entity.view.KaoqinxinxiView" >
+		SELECT * FROM kaoqinxinxi  kaoqinxinxi <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+	
+
+    <select id="selectValue" resultType="map" >
+        SELECT ${params.xColumn}, sum(${params.yColumn}) total FROM kaoqinxinxi
+        <where> 1=1 ${ew.sqlSegment}</where>
+        group by ${params.xColumn}
+        limit 10
+    </select>
+
+    <select id="selectTimeStatValue" resultType="map" >
+        <if test = 'params.timeStatType == "日"'>
+                SELECT DATE_FORMAT(${params.xColumn},'%Y-%m-%d') ${params.xColumn}, sum(${params.yColumn}) total FROM kaoqinxinxi
+                <where> 1=1 ${ew.sqlSegment}</where>
+                group by DATE_FORMAT(${params.xColumn},'%Y-%m-%d')
+        </if>
+        <if test = 'params.timeStatType == "月"'>
+                SELECT DATE_FORMAT(${params.xColumn},'%Y-%m') ${params.xColumn}, sum(${params.yColumn}) total FROM kaoqinxinxi
+                <where> 1=1 ${ew.sqlSegment}</where>
+                group by DATE_FORMAT(${params.xColumn},'%Y-%m')
+        </if>
+        <if test = 'params.timeStatType == "年"'>
+                SELECT DATE_FORMAT(${params.xColumn},'%Y') ${params.xColumn}, sum(${params.yColumn}) total FROM kaoqinxinxi
+                <where> 1=1 ${ew.sqlSegment}</where>
+                group by DATE_FORMAT(${params.xColumn},'%Y')
+        </if>
+    </select>
+   
+    <select id="selectGroup" resultType="map" >
+        SELECT ${params.column} , count(1) total FROM kaoqinxinxi  
+        <where> 1=1 ${ew.sqlSegment}</where>
+        group by ${params.column}
+        limit 10
+    </select>
+
+
+    <select id="xingmingkaoqinzhuangkuangTypeStat" resultType="map" >
+        select 
+        xingming,
+        sum(case when kaoqinzhuangkuang in ('正常') then 1 else 0 end) as 正常,        sum(case when kaoqinzhuangkuang in ('迟到') then 1 else 0 end) as 迟到,        sum(case when kaoqinzhuangkuang in ('早退') then 1 else 0 end) as 早退,        sum(case when kaoqinzhuangkuang in ('旷工') then 1 else 0 end) as 旷工,        sum(case when kaoqinzhuangkuang in ('请假') then 1 else 0 end) as 请假,        sum(case when kaoqinzhuangkuang in ('休假') then 1 else 0 end) as 休假        from kaoqinxinxi
+        <where> 1=1 ${ew.sqlSegment}</where>
+        group by xingming
+    </select>
+
+	
+</mapper>
